@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import sample_tool
 import argparse
-import os, time, json
+import os, time, json, shutil
 from datetime import datetime
 import progressbar 
 from pathlib import Path
@@ -12,9 +12,9 @@ CACHE_DIR = Path('cache')
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', default='https://ncpc19.kattis.com', help='url for kattis competition to fetch')
-    parser.add_argument('-f', '--force', action='store_true')
-    parser.add_argument('-w', '--wait', default='')
-    parser.add_argument('-o', '--outdir', default='.')
+    parser.add_argument('-f', '--force', action='store_true', help='remove cache and refetch')
+    parser.add_argument('-w', '--wait', default='', help='wait until. format HH:MM[:SS]')
+    parser.add_argument('-o', '--outdir', default='data', help='directory to put problem data in')
     args = parser.parse_args()
     args.wait = get_wait(args.wait)
     args.url = args.url.rstrip('/')
@@ -87,9 +87,16 @@ def process_statement(statement):
     pbody = soup.find(class_='problembody')
     return len(str(pbody).replace('\n','')) # len of problem body
 
+def clean():
+    shutil.rmtree(CACHE_DIR, ignore_errors=True)
+    try:
+        os.remove('problems.json')
+    except: pass
+
+
 def main(args):
     if args.force:
-        os.rmdir(CACHE_DIR)
+        clean()
     os.makedirs(CACHE_DIR, exist_ok=True)
     os.makedirs(args.outdir, exist_ok=True)
     if args.wait != None:
