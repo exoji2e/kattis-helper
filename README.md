@@ -3,6 +3,13 @@
 - fetch the sample data for every problem
 - run your solution against all `testcase.in` and `testcase.ans` files in a directory.
 
+## Install dependencies:
+
+- Set up a virtual environment (optional)
+- `python3 -m pip install -r requirements.txt`
+
+pip-dependencies are the following: `requests` `bs4` `progressbar2`.
+
 ## Fetching data from a contest
 
 `python3 fetcher.py -u https://ncpc19.kattis.com`
