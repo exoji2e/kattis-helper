@@ -6,7 +6,6 @@ def get_samples_url(problem_url):
     return problem_url.rstrip('/') + '/file/statement/samples.zip'
 
 def retriveUrl(url):
-    print('retrieving:', str(url))
     req = Request(
         str(url),
         headers={"user-agent": "firefox"},

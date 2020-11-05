@@ -2,3 +2,4 @@ cache
 data
 __pycache__
 problems.json
+fetch_report.txt

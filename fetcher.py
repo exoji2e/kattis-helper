@@ -10,9 +10,15 @@ from pathlib import Path
 CACHE_DIR = Path('cache')
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    usages = """
+# fetch 5 seconds after 11:00
+python3 fetcher.py -u https://ncpc20.kattis.com -w 11:00:05
+# clear cache, then fetch.
+python3 fetcher.py -f -u https://ncpc19.kattis.com
+"""
+    parser = argparse.ArgumentParser(usage=usages)
     parser.add_argument('-u', '--url', default='https://ncpc19.kattis.com', help='url for kattis competition to fetch')
-    parser.add_argument('-f', '--force', action='store_true', help='remove cache and refetch')
+    parser.add_argument('-f', '--force', action='store_true', help='remove cache and before fetching')
     parser.add_argument('-w', '--wait', default='', help='wait until. format HH:MM[:SS]')
     parser.add_argument('-o', '--outdir', default='data', help='directory to put problem data in')
     args = parser.parse_args()
@@ -33,9 +39,7 @@ def get(url):
         
 def extract_problems(URL):
     html = get(URL + '/problems')
-    print('got html')
     soup = BeautifulSoup(html, 'html.parser')
-    print('parsed soup')
     problems = {}
     for tr in soup.find_all('tr'):
         if tr.find_all(class_='problem_letter'):
@@ -93,23 +97,31 @@ def clean():
         os.remove('problems.json')
     except: pass
 
+def setup_dirs(args):
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    os.makedirs(args.outdir, exist_ok=True)
+
+
 
 def main(args):
     if args.force:
         clean()
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    os.makedirs(args.outdir, exist_ok=True)
     if args.wait != None:
         wait_until(args.wait)
-    URL = args.url
-    r = extract_problems(URL)
-    for id, url in r.items():
+    setup_dirs(args)
+
+    res = extract_problems(args.url)
+    out = []
+    for id, p_url in res.items():
         zipName = CACHE_DIR / f'{id}.zip'
         if not os.path.exists(zipName):
-            sample_tool.fetch_sample_zip(url, zipName)
+            sample_tool.fetch_sample_zip(p_url, zipName)
         sample_tool.unpack_samples(zipName, args.outdir / f'{id}')
-        statement = get(url)
-        print(id, process_statement(statement), url)
+        statement = get(p_url)
+        S = '{} {} {}'.format(id, process_statement(statement), p_url)
+        print(S)
+        out.append(S)
+    print('\n'.join(out), file=open('fetch_report.txt', 'w'))
         
 
 if __name__ == '__main__':
