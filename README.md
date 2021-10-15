@@ -1,7 +1,13 @@
 # Kattis helper
 
-- fetch the sample data for every problem
+- fetch the sample data for every problem in a kattis-contest
 - run your solution against all `testcase.in` and `testcase.ans` files in a directory.
+
+## Install:
+Run `./install.sh` to:
+
+- Install dependencies
+- Create links to fetcher.py & run.py in `$HOME/.local/bin`.
 
 ## Install dependencies:
 
@@ -9,6 +15,7 @@
 - `python3 -m pip install -r requirements.txt`
 
 pip-dependencies are the following: `requests` `bs4` `progressbar2`.
+
 
 ## Fetching data from a contest
 

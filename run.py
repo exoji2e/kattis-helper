@@ -1,4 +1,4 @@
-#!/usr/bin/pypy3
+#!/usr/bin/env python3
 import argparse
 import subprocess
 import glob
@@ -88,6 +88,7 @@ p3 run.py -d data/H -c 'pypy3 H.py'"""
     parser.add_argument('file', default=None, help='source file to run (or command if -c is specified.)')
     parser.add_argument('--python_name', required=False, default='pypy3')
     parser.add_argument('-d', '--sample_dir', required=True, help='directory with in/ans-files')
+    parser.add_argument('-r', '--recursive', required=False, action='store_true', help='look for in/ans files in subdirectories as well')
     parser.add_argument('-c', '--command', required=False, action='store_true', help='interpret file argument as command')
     args = parser.parse_args()
     args.sample_dir = args.sample_dir.rstrip('/')
@@ -116,7 +117,9 @@ def get_run_command(fName, command):
 def main():
     args = get_args()
     run_cmd = get_run_command(args.file, args.command)
-    in_files = glob.glob(args.sample_dir + '/*.in')
+    in_files = sorted(glob.glob(args.sample_dir + '/*.in'))
+    if args.recursive:
+        in_files = sorted(in_files + glob.glob(args.sample_dir + '/**/*.in'))
     for in_file in in_files:
         inp = open(in_file).read()
         ans = open(strip_in(in_file) + '.ans').read()
