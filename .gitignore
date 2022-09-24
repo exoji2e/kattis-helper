@@ -4,3 +4,4 @@ __pycache__
 problems.json
 fetch_report.txt
 venv
+.DS_Store

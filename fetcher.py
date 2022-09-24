@@ -29,6 +29,9 @@ python3 fetcher.py -f -u https://ncpc19.kattis.com
     args.cachedir = Path('cache')
     return args
 
+def getBaseUrl(URL):
+    return URL.split('kattis.com')[0] + 'kattis.com'
+
 def get(url):
     fname = convert_url_to_file(url)
     if os.path.exists(fname):
@@ -39,14 +42,22 @@ def get(url):
         return r.text
         
 def extract_problems(URL):
-    html = get(URL + '/problems')
+    PageURL = URL + '/problems'
+    html = get(PageURL)
     soup = BeautifulSoup(html, 'html.parser')
     problems = {}
     for tr in soup.find_all('tr'):
-        if tr.find_all(class_='problem_letter'):
-            problems[tr.th.text] =  URL + tr.find('a').get('href')
+        if tr.find('a'):
+            relLink:str = tr.find('a').get('href')
+            if relLink.startswith('/'):
+                url = getBaseUrl(PageURL) + relLink
+            else:
+                url = PageURL + relLink
+            problems[tr.th.text] = url
+
     with open('problems.json', 'w') as f:
         f.write(json.dumps(problems))
+    
     return problems
 
 
@@ -116,7 +127,7 @@ def main(args):
     for id, p_url in res.items():
         zipName = CACHE_DIR / f'{id}.zip'
         if not os.path.exists(zipName):
-            sample_tool.fetch_sample_zip(p_url, zipName)
+            sample_tool.fetch_sample_zip(p_url, zipName, CACHE_DIR)
         sample_tool.unpack_samples(zipName, args.outdir / f'{id}')
         statement = get(p_url)
         S = '{} {} {}'.format(id, process_statement(statement), p_url)
