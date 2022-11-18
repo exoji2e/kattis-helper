@@ -3,6 +3,18 @@ import argparse
 import subprocess
 import glob
 import time
+import math
+
+class bcolors:
+    GREEN = '\033[38;5;46m'
+    RED = '\033[91m'
+    ENDC = '\033[0m'
+
+def red(s):
+    return f'{bcolors.RED}{s}{bcolors.ENDC}'
+
+def green(s):
+    return f'{bcolors.GREEN}{s}{bcolors.ENDC}'
 
 PYTHON_ENV = 'pypy3'
 
@@ -53,7 +65,7 @@ def process(cmd, inp, ans, name):
     ans = ans.strip()
     dt = time.time() - t0
     if r != 0:
-        print('[RTE] {:.2f}s {}'.format(dt, name))
+        print(f'{red("[RTE]")} {dt:.2f}s {name}')
         if out:
             print('stdout:')
             print(out)
@@ -62,19 +74,19 @@ def process(cmd, inp, ans, name):
     ok, diff = compare(out, ans)
     if ok:
         if diff == 0:
-            print('[AC] {:.2f}s {}'.format(dt, name))
+            print(f'{green("[AC]")} {dt:.2f}s {name}')
         else:
-            import math
             err = int(math.log(diff, 10))
-            print('[AC] {:.2f}s {} - maxdiff: 1e{}'.format(dt, name, err))
+            print(f'{green("[AC]")} {dt:.2f}s {name} - maxdiff: 1e{err}')
     else:
-        print('[WA] {:.2f}s {}'.format(dt, name))
+        print(f'{red("[WA]")} {dt:.2f}s {name}')
         print('[EXPECTED]:')
         print(ans)
         print('---------')
         print('[GOT]:')
         print(out)
         print('---------')
+        exit(1)
 
 
 def compile(file):
@@ -82,8 +94,8 @@ def compile(file):
 
 def get_args():
     usage = """
-p3 run.py -d data/H H.py
-p3 run.py -d data/H -c 'pypy3 H.py'"""
+p3 kattis_run.py -d data/H H.py
+p3 kattis_run.py -d data/H -c 'pypy3 H.py'"""
     parser = argparse.ArgumentParser(usage=usage)
     parser.add_argument('file', default=None, help='source file to run (or command if -c is specified.)')
     parser.add_argument('--python_name', required=False, default='pypy3')
@@ -92,6 +104,7 @@ p3 run.py -d data/H -c 'pypy3 H.py'"""
     parser.add_argument('-c', '--command', required=False, action='store_true', help='interpret file argument as command')
     args = parser.parse_args()
     args.sample_dir = args.sample_dir.rstrip('/')
+    global PYTHON_ENV
     PYTHON_ENV = args.python_name
     return args
 
@@ -112,7 +125,7 @@ def get_run_command(fName, command):
         print('extension {} not supported: {}'.format(ext, fName))
         exit(1)
     return ext2cmd[ext](fName)
-    
+
 
 def main():
     args = get_args()
@@ -124,6 +137,6 @@ def main():
         inp = open(in_file).read()
         ans = open(strip_in(in_file) + '.ans').read()
         process(run_cmd, inp, ans, in_file)
-        
+
 if __name__ == '__main__':
     main()
