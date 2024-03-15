@@ -43,7 +43,7 @@ def getBaseUrl(URL):
 def get_samples_url(problem_url, CACHE_DIR):
     problemPage = get(problem_url, CACHE_DIR)
     soup = BeautifulSoup(problemPage, 'html.parser')
-    dl = soup.find(class_='metadata_list-downloads')
+    dl = soup.find(class_='metadata-downloads-card')
     if dl:
         a = dl.find('a')
         if a:
@@ -52,6 +52,7 @@ def get_samples_url(problem_url, CACHE_DIR):
 
 def fetch_sample_zip(problem_url, file_name, CACHE_DIR):
     url = get_samples_url(problem_url, CACHE_DIR)
+    print(url)
     if url:
         resp = retriveUrl(url)
 
