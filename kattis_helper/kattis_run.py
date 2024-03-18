@@ -94,8 +94,8 @@ def compile(file):
 
 def get_args():
     usage = """
-p3 kattis_run.py -d data/H H.py
-p3 kattis_run.py -d data/H -c 'pypy3 H.py'"""
+kattis-run -d data/H H.py
+kattis-run -d data/H -c 'pypy3 H.py'"""
     parser = argparse.ArgumentParser(usage=usage)
     parser.add_argument('file', default=None, help='source file to run (or command if -c is specified.)')
     parser.add_argument('--python_name', required=False, default='pypy3')

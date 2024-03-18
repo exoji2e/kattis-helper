@@ -5,10 +5,10 @@ set -e
 function mk_link {
     src=$1
     dst=$2
-    if test -f "$dst"; then
+    if test -L "$dst" || test -e "$dst"; then
         read -p "$dst exists. Do you wish to overwrite it? [y/N]" yn
         case $yn in
-            [Yy]* ) 
+            [Yy]* )
                 rm $dst;;
             * ) return;
         esac
@@ -16,12 +16,12 @@ function mk_link {
     ln -s $src $dst
 }
 
-python3 -m pip -r requirements.txt
+poetry install
 
 BIN="$HOME/.local/bin"
 mkdir -p $BIN
 
-mk_link $(realpath run.py) $BIN/kattis-run
-mk_link $(realpath fetcher.py) $BIN/kattis-fetch
+mk_link $(pwd)/kattis-run $BIN/kattis-run
+mk_link $(pwd)/kattis-fetch $BIN/kattis-fetch
 
 echo "Make sure $BIN is on your path!"

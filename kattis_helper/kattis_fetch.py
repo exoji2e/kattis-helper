@@ -13,9 +13,9 @@ CACHE_DIR = Path('cache')
 def get_args():
     usages = """
 # fetch 5 seconds after 11:00
-python3 fetcher.py -u https://ncpc20.kattis.com -w 11:00:05
+kattis-fetch -u https://ncpc20.kattis.com -w 11:00:05
 # clear cache, then fetch.
-python3 fetcher.py -f -u https://ncpc19.kattis.com
+kattis-fetch -f -u https://ncpc19.kattis.com
 """
     parser = argparse.ArgumentParser(usage=usages)
     parser.add_argument('-u', '--url', default='https://ncpc19.kattis.com', help='url for kattis competition to fetch')
