@@ -5,7 +5,7 @@ import sample_tool
 import argparse
 import os, time, json, shutil
 from datetime import datetime
-import progressbar 
+import progressbar
 from pathlib import Path
 
 CACHE_DIR = Path('cache')
@@ -40,7 +40,7 @@ def get(url):
         r = requests.get(str(url))
         open(fname,'w').write(r.text)
         return r.text
-        
+
 def extract_problems(URL):
     PageURL = URL + '/problems'
     html = get(PageURL)
@@ -57,7 +57,7 @@ def extract_problems(URL):
 
     with open('problems.json', 'w') as f:
         f.write(json.dumps(problems))
-    
+
     return problems
 
 
@@ -128,13 +128,16 @@ def main(args):
         zipName = CACHE_DIR / f'{id}.zip'
         if not os.path.exists(zipName):
             sample_tool.fetch_sample_zip(p_url, zipName, CACHE_DIR)
-        sample_tool.unpack_samples(zipName, args.outdir / f'{id}')
+        try:
+            sample_tool.unpack_samples(zipName, args.outdir / f'{id}')
+        except:
+            pass
         statement = get(p_url)
         S = '{} {} {}'.format(id, process_statement(statement), p_url)
         print(S)
         out.append(S)
     print('\n'.join(out), file=open('fetch_report.txt', 'w'))
-        
+
 
 if __name__ == '__main__':
     args = get_args()

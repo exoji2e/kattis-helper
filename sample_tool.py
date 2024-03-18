@@ -60,7 +60,6 @@ def fetch_sample_zip(problem_url, file_name, CACHE_DIR):
             f.write(resp)
     else:
         print(f'WARN: couldnt find samples for: {problem_url}')
-        exit(1)
 
 
 def unpack_samples(zipName, destDir):
