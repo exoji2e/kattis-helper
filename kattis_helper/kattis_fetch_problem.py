@@ -3,7 +3,7 @@ import sample_tool
 
 def get_args():
     usages = """
-python3 fetcher.py -u https://open.kattis.com/problems/froshweek
+python3 fetch_problem.py -u https://open.kattis.com/problems/froshweek
 """
     parser = argparse.ArgumentParser(usage=usages)
     parser.add_argument('-u', '--url', required=True, help='url for kattis problem to fetch')
@@ -21,7 +21,7 @@ def main(args):
     zip_path = f'{target}/{problem_name}.zip'
     data_dst = f'{target}/data'
     sample_tool.fetch_data(args.url, data_dst, zip_path, rm_zip=True)
-    open(f'{target}/{problem_name}.py', 'w').write(f'# {problem_name}\n\n')
+    open(f'{target}/{problem_name}.py', 'w').write(f'#!/usr/bin/env python3\n# {problem_name}\n\n')
 
 
 

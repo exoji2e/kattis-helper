@@ -23,5 +23,6 @@ mkdir -p $BIN
 
 mk_link $(pwd)/kattis-run $BIN/kattis-run
 mk_link $(pwd)/kattis-fetch $BIN/kattis-fetch
+mk_link $(pwd)/kattis-fetch-problem $BIN/kattis-fetch-problem
 
 echo "Make sure $BIN is on your path!"
